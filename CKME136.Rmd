@@ -1,0 +1,138 @@
+---
+title: "CKME136 Capstone Project"
+author: "Brendan Behan"
+date: '2020-03-16'
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# # Set up R and Import 3 files (Opioids, Prescribers, Overdoses)
+
+```{r}
+install.packages("class", repos="http://cran.us.r-project.org")
+install.packages("gmodels", repos="http://cran.us.r-project.org")
+install.packages("biganalytics", repos="http://cran.us.r-project.org")
+library(class)
+library(gmodels)
+library(ggplot2)
+library(biganalytics)
+
+opioids <- read.csv("C:/Users/bbehan/Desktop/ckme136/data/opioids.csv")
+prescribers <- read.csv("C:/Users/bbehan/Desktop/ckme136/data/prescriber-info.csv")
+overdoses <- read.csv("C:/Users/bbehan/Desktop/ckme136/data/overdoses.csv")
+
+# check that files are loaded as data frames in R
+df <- data.frame()
+is.data.frame(opioids)
+is.data.frame(prescribers)
+is.data.frame(overdoses)
+
+```
+
+# Step 1: Explore trends in opioid prescriptions
+
+
+```{r}
+# Look at characteristics of Opioids file
+summary(opioids)
+head(opioids)
+tail(opioids)
+
+#There are 113 entries - with 5 instances of repetitions
+```
+```{r}
+# Look at characteristics of Prescribers file
+summary(prescribers)
+head(prescribers)
+tail(prescribers)
+
+#There are 25,000 entries - with 256 columns per entry
+```
+
+#Step 1: Explore trends in opioid prescriptions
+#The Opioids dataset will be used to pull out opioid prescriptions from the Prescribers dataset.
+
+```{r}
+
+## I want to take the drug names(first column) from the Opioids fileand cross-reference it with all the drug names (header) in the Prescribers file 
+
+##Take out header information from Prescribers file and compare it to Opioids file
+
+names(prescribers)
+prescribers_column_names <- data.frame(names(prescribers))
+is.data.frame(prescribers_column_names)
+
+## View files to get column names
+
+View(prescribers_column_names)
+View(opioids)
+
+##Compare drugs listed from Prescribers file with Opioids file
+
+## Merge Function
+
+identified_opioids <- merge(x=prescribers_column_names, y=opioids, by.x='names.prescribers.', by.y='Drug.Name')
+
+View(identified_opioids)
+
+#2 opioids identified - Fentanyl and Oxycontin. However, from visually inspecting datasets there should be more overlap, need to go back and clean datasets further (e.g., naming conventions)
+
+# Filter Prescribers file by 'Fentanyl' and 'Oxycontin' to get further information
+
+# Fentanyl
+
+prescibers_fentanyl <- prescribers$FENTANYL >= 1
+summary(prescibers_fentanyl)
+
+# 1965 providers prescribe fentanyl
+
+prescribers_oxycontin <- prescribers$OXYCONTIN >= 1
+summary(prescribers_oxycontin)
+
+# 1294 providers prescribe oxycontin
+
+
+```
+
+# Step 2: Explore trends in prescriptions from healthcare professionals
+#I will use the Prescribers datasets to gather more information on the healthcare professionals that are prescribing such opioid medications.
+#I will examine trends on whether particular types of healthcare professionals are prescribing more opioid medications than others, and whether this varies by U.S. state.
+
+
+```{r}
+
+```
+
+# Step 3
+# Finally, after gathering information from exploring information related to opioid medications & healthcare professionals that prescribe such compounds, I will aim to develop a predictive model (e.g., regression analysis) between opioid prescriptions and opioid-related overdose fatalities. 
+
+```{r}
+#lm(overdoses~prescribers, data = overdoses_prescribers_combined)
+
+```
+
+
+```{r}
+
+
+
+```
+
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+
+
