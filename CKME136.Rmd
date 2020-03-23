@@ -34,8 +34,10 @@ is.data.frame(overdoses)
 
 ```
 
-# Step 1: Explore trends in opioid prescriptions
-
+# Explore datasets
+# Opioids
+# Prescribers
+# Overdoses
 
 ```{r}
 # Look at characteristics of Opioids file
@@ -53,7 +55,14 @@ tail(prescribers)
 
 #There are 25,000 entries - with 256 columns per entry
 ```
+```{r}
+# Look at characteristics of Overdoses file
+summary(overdoses)
+head(overdoses)
+tail(overdoses)
 
+#There are 50 rows (one per US state) showing overall state population and # of deaths
+```
 #Step 1: Explore trends in opioid prescriptions
 #The Opioids dataset will be used to pull out opioid prescriptions from the Prescribers dataset.
 
@@ -82,20 +91,230 @@ View(identified_opioids)
 
 #2 opioids identified - Fentanyl and Oxycontin. However, from visually inspecting datasets there should be more overlap, need to go back and clean datasets further (e.g., naming conventions)
 
-# Filter Prescribers file by 'Fentanyl' and 'Oxycontin' to get further information
+# Clean up Opioid Dataset to replace spaces and hyphens with periods
 
-# Fentanyl
+opioids_drug.name <- opioids$Drug.Name
 
-prescibers_fentanyl <- prescribers$FENTANYL >= 1
-summary(prescibers_fentanyl)
+opioids_replace_space <- gsub(" ", ".", opioids_drug.name)
 
-# 1965 providers prescribe fentanyl
+opioids_replace_space_and_hyphen <- gsub("-", ".", opioids_replace_space)
+
+View(opioids_replace_space_and_hyphen)
+
+# change name to show that opioids dataset have now been cleaned
+
+opioids_cleaned <- opioids_replace_space_and_hyphen
+
+# Re-run previous merge command
+
+opioids_cleaned_df <- data.frame(opioids_cleaned)
+
+identified_opioids_cleaned <- merge(x=prescribers_column_names, y=opioids_cleaned_df, by.x='names.prescribers.', by.y='opioids_cleaned')
+
+View(identified_opioids_cleaned)
+
+# 13 opioids identified - however 2 drugs are repeated - HYDROMORPHONE.HCL and MORPHINE.SULFATE
+
+# Therefore, 11 of the 250 medications in the Prescribers file are opioids
+
+
+# Determine how many prescribers have prescribed at least one of these opioids
+
+prescriber_numbers <- nrow(prescribers)
+
+print(prescriber_numbers)
+
+# 25000 prescribers identified
+
+# Identify which prescribers have prescribed at least one of the 11 listed opioids
+
+prescriber_opioids <- filter(prescribers, (prescribers$ACETAMINOPHEN.CODEINE >= 1) | (prescribers$FENTANYL >= 1) | (prescribers$HYDROCODONE.ACETAMINOPHEN >= 1) | (prescribers$HYDROMORPHONE.HCL >= 1) | (prescribers$METHADONE.HCL >= 1) | (prescribers$MORPHINE.SULFATE >= 1) | (prescribers$MORPHINE.SULFATE.ER >= 1) | (prescribers$OXYCODONE.ACETAMINOPHEN >= 1) | (prescribers$OXYCODONE.HCL >= 1)|(prescribers$OXYCONTIN >= 1) | (prescribers$TRAMADOL.HCL >= 1))
+
+nrow(prescriber_opioids)
+
+# 12800 of listed 25000 prescribers have prescribed at least one of the 11 opioids
+
+# Get %
+
+percentage_prescribers_opioids <- nrow(prescriber_opioids) / prescriber_numbers * 100
+
+print(percentage_prescribers_opioids)
+
+# 51.2 % of prescribers have prescribed at least one opioid
+
+# Breakdown per opioid
+
+# 01. Acetaminophen.Codeine
+
+prescribers_acetaminophen.codeine <- prescribers$ACETAMINOPHEN.CODEINE >= 1
+
+summary(prescribers_acetaminophen.codeine)
+
+# 2133 prescribers have prescribed Acetaminophen.Codeine at least once
+
+percent_prescribers_acetaminophen.codeine <- (2133/prescriber_numbers)*100
+
+print(percent_prescribers_acetaminophen.codeine)
+
+# 2133 prescribers have prescribed Acetaminophen.Codeine - 8.532% of Prescribers
+
+# 02. Fentanyl
+
+prescribers_fentanyl <- prescribers$FENTANYL >= 1
+summary(prescribers_fentanyl)
+
+# 1965 prescribers have prescribed Fentanyl at least once
+
+percent_prescribers_fentanyl <- (1965/prescriber_numbers)*100
+
+print(percent_prescribers_fentanyl)
+
+# 1965 prescribers have prescribed Fentanyl - 7.86% of Prescribers
+
+# 03. Hydrocodone.Acetaminophen
+
+prescribers_hydrocodone.acetaminophen <- prescribers$HYDROCODONE.ACETAMINOPHEN >= 1
+summary(prescribers_hydrocodone.acetaminophen)
+
+# 10044 prescribers have prescribed Hydrocodone.Acetaminophen at least once
+
+percent_prescribers_hydrocodone.acetaminophen <- (10044/prescriber_numbers)*100
+
+print(percent_prescribers_hydrocodone.acetaminophen)
+
+# 10044 prescribers have prescribed Hydrocodone.Acetaminophen - 40.176% of Prescribers
+
+# 04. Hydromorphone.HCL
+
+prescribers_hydromorphone.HCL <- prescribers$HYDROMORPHONE.HCL >= 1
+
+summary(prescribers_hydromorphone.HCL)
+
+# 722 prescribers have prescribed Hydromorphone.HCL at least once
+
+percent_prescribers_hydromorphone.HCL <- (722/prescriber_numbers)*100
+
+print(percent_prescribers_hydromorphone.HCL)
+
+# 722 prescribers have prescribed Hydromorphone.HCL - 2.888% of Prescribers
+
+# 05. Methadone.HCL
+
+prescribers_methadone.HCL <- prescribers$METHADONE.HCL >= 1
+
+summary(prescribers_methadone.HCL)
+
+# 865 prescribers have prescribed Methadone.HCL at least once
+
+percent_prescribers_methadone.HCL <- (865/prescriber_numbers)*100
+
+print(percent_prescribers_methadone.HCL)
+
+# 865 prescribers have prescribed Methadone.HCL - 3.46% of Prescribers
+
+# 06. Morphine.Sulfate
+
+prescribers_morphine.sulfate <- prescribers$MORPHINE.SULFATE >= 1
+
+summary(prescribers_morphine.sulfate)
+
+# 674 prescribers have prescribed Morphine.Sulfate at least once
+
+percent_prescribers_morphine.sulfate <- (674/prescriber_numbers)*100
+
+print(percent_prescribers_morphine.sulfate)
+
+# 674 prescribers have prescribed Morphine.Sulfate - 2.696% of Prescribers
+
+
+# 07. Morphine.Sulfate.ER
+
+prescribers_morphine.sulfate.er <- prescribers$MORPHINE.SULFATE.ER >= 1
+
+summary(prescribers_morphine.sulfate.er)
+
+# 1738 prescribers have prescribed Morphine.Sulfate.Er at least once
+
+percent_prescribers_morphine.sulfate.er <- (1738/prescriber_numbers)*100
+
+print(percent_prescribers_morphine.sulfate.er)
+
+# 1738 prescribers have prescribed Morphine.Sulfate.Er - 6.952% of Prescribers
+
+
+# 08. Oxycodone.Acetaminophen
+
+prescribers_oxycodone.acetaminophen <- prescribers$OXYCODONE.ACETAMINOPHEN >= 1
+
+summary(prescribers_oxycodone.acetaminophen)
+
+# 4922 prescribers have prescribed Oxycodone.Acetaminophen at least once
+
+percent_prescribers_oxycodone.acetaminophen <- (4922/prescriber_numbers)*100
+
+print(percent_prescribers_oxycodone.acetaminophen)
+
+# 4922 prescribers have prescribed Oxycodone.Acetaminophen - 19.688% of Prescribers
+
+
+# 09. Oxycodone.HCL
+
+prescribers_oxycodone.hcl <- prescribers$OXYCODONE.HCL >= 1
+
+summary(prescribers_oxycodone.hcl)
+
+# 2945 prescribers have prescribed Oxycodone.HCL at least once
+
+percent_presrcibers_oxycodone.hcl <- (2945/prescriber_numbers)*100
+
+print(percent_presrcibers_oxycodone.hcl)
+
+# 2945 prescribers have prescribed Oxycodone.HCL - 11.78% of Prescribers
+
+
+# 10. Oxycontin
 
 prescribers_oxycontin <- prescribers$OXYCONTIN >= 1
+
 summary(prescribers_oxycontin)
 
-# 1294 providers prescribe oxycontin
+# 1294 prescribers have prescribed Oxycontin at least once
 
+percent_prescribers_oxycontin <- (1294/prescriber_numbers)*100
+
+print(percent_prescribers_oxycontin)
+
+# 1294 prescribers have prescribed Oxycodone.HCL - 5.176% of Prescribers
+
+
+# 11. Tramadol.HCL
+
+prescribers_tramadol.hcl <- prescribers$TRAMADOL.HCL >= 1
+
+summary(prescribers_tramadol.hcl)
+
+# 6633 prescribers have prescribed Tramadol.HCL at least once
+
+percent_prescribers_tramadol.hcl <- (6633/prescriber_numbers)*100
+
+print(percent_prescribers_tramadol.hcl)
+
+# 6633 prescribers have prescribed Tramadol.HCL - 26.532% of Prescribers
+
+
+# Create a data frame of % prescribers prescribing each opioid and plot it
+
+drug_name <- c('Acetaminophen.Codeine', 'Fentanyl', 'Hydrocodone.Acetaminophen', 'Hydromorphone.HCL', 'Methadone.HCL', 'Morphine.Sulfate', 'Morphine.Sulfate.ER', 'Oxycodone.Acetaminophen', 'Oxycodone.HCL', 'Oxycontin', 'Tramadol.HCL')
+
+percent_prescribers_drug_name <- c(8.532, 7.86, 40.176, 2.888, 3.46, 2.696, 6.952, 19.688, 11.78, 5.176, 26.532)
+
+opioids_prescriber_breakdown <- data.frame(drug_name, percent_prescribers_drug_name)
+
+# plot using ggplot2
+
+q <- qplot(drug_name, percent_prescribers_drug_name, data=opioids_prescriber_breakdown, geom="boxplot")
+
+q + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 ```
 
@@ -105,6 +324,115 @@ summary(prescribers_oxycontin)
 
 
 ```{r}
+# Get Descriptive Stats for Prescribers who are prescribing Opiods - (i) Gender, (ii) State, (iii) Specialty
+
+# (i) Gender - Descriptive Stats on Gender linked to Prescribers who are prescribing Opioids
+
+prescribers_gender <- prescribers$Gender
+View(prescribers_gender)
+
+# Convert to Data Frame
+
+prescribers_gender_df <- as.data.frame(prescribers_gender)
+
+# Breakdown of Gender of prescribers prescribing opioids
+
+prescriber_gender_opioids <- filter(prescribers_gender_df, (prescribers$ACETAMINOPHEN.CODEINE >= 1) | (prescribers$FENTANYL >= 1) | (prescribers$HYDROCODONE.ACETAMINOPHEN >= 1) | (prescribers$HYDROMORPHONE.HCL >= 1) | (prescribers$METHADONE.HCL >= 1) | (prescribers$MORPHINE.SULFATE >= 1) | (prescribers$MORPHINE.SULFATE.ER >= 1) | (prescribers$OXYCODONE.ACETAMINOPHEN >= 1) | (prescribers$OXYCODONE.HCL >= 1)|(prescribers$OXYCONTIN >= 1) | (prescribers$TRAMADOL.HCL >= 1))
+
+summary(prescriber_gender_opioids)
+
+### Results ###
+
+ #prescribers_gender
+ #F:4368            
+ #M:8432
+
+
+# (ii) State - Descriptive Stats on State linked to Prescribers who are prescribing Opioids
+
+prescribers_state <- prescribers$State
+View(prescribers_state)
+
+# Convert to Data Frame
+
+prescribers_state_df <- as.data.frame(prescribers_state)
+
+# Breakdown of Gender of prescribers prescribing opioids
+
+prescriber_state_opioids <- filter(prescribers_state_df, (prescribers$ACETAMINOPHEN.CODEINE >= 1) | (prescribers$FENTANYL >= 1) | (prescribers$HYDROCODONE.ACETAMINOPHEN >= 1) | (prescribers$HYDROMORPHONE.HCL >= 1) | (prescribers$METHADONE.HCL >= 1) | (prescribers$MORPHINE.SULFATE >= 1) | (prescribers$MORPHINE.SULFATE.ER >= 1) | (prescribers$OXYCODONE.ACETAMINOPHEN >= 1) | (prescribers$OXYCODONE.HCL >= 1)|(prescribers$OXYCONTIN >= 1) | (prescribers$TRAMADOL.HCL >= 1))
+
+summary(prescriber_state_opioids)
+
+### Results ###
+
+ #prescribers_state
+ #CA     :1293     
+ #TX     : 864     
+ #FL     : 750     
+ #NY     : 711     
+ #PA     : 587     
+ #OH     : 503     
+ #(Other):8092
+
+# These are raw #s - need to use state population levels from Overdoses death to generate per capita levels
+
+# (iii) Specialty - Descriptive Stats on Specialty linked to Prescribers who are prescribing Opioids
+
+prescribers_specialty <- prescribers$Specialty
+View(prescribers_specialty)
+
+# Convert to Data Frame
+
+prescribers_specialty_df <- as.data.frame(prescribers_specialty)
+
+# Breakdown of prescribers prescribing opioids
+
+prescriber_specialty_opioids <- filter(prescribers_specialty_df, (prescribers$ACETAMINOPHEN.CODEINE >= 1) | (prescribers$FENTANYL >= 1) | (prescribers$HYDROCODONE.ACETAMINOPHEN >= 1) | (prescribers$HYDROMORPHONE.HCL >= 1) | (prescribers$METHADONE.HCL >= 1) | (prescribers$MORPHINE.SULFATE >= 1) | (prescribers$MORPHINE.SULFATE.ER >= 1) | (prescribers$OXYCODONE.ACETAMINOPHEN >= 1) | (prescribers$OXYCODONE.HCL >= 1)|(prescribers$OXYCONTIN >= 1) | (prescribers$TRAMADOL.HCL >= 1))
+
+summary(prescriber_specialty_opioids)
+
+### Results ###
+
+ #Family Practice    :2410     
+ #Internal Medicine  :2078     
+ #Nurse Practitioner :1165     
+ #Physician Assistant:1114     
+ #Emergency Medicine : 992     
+ #Dentist            : 817     
+ #(Other)            :4224 
+
+
+
+
+# Breakdown per Opioid - Descriptive Stats
+
+# 01. Acetaminophen.Codeine
+
+prescribers_opioid_info <- prescribers[prescribers$ACETAMINOPHEN.CODEINE >=1,]
+
+# Breakdown of prescribers prescribing Fentanyl
+
+prescribers_fentanyl_info <- prescribers[prescribers$FENTANYL >= 1,]
+
+# Get descriptive stats on healthcare professionals prescribing Fentanyl
+
+View(table(prescribers_fentanyl_info$Gender))
+
+# 682 are female, 1283 are male
+
+# Get descriptive stats on states where healthcare professionals prescribing Fentanyl
+
+View(table(prescribers_fentanyl_info$State))
+
+# California has most healthcare professionals prescribing fentanyl (n=154), then Pennsylvania (n=138), and thirdly New York (n=121). These are raw #s - not accounting for # of overall healthcare professionals in each state
+
+# Get descriptive stats on healthcare professionals specialties 
+
+View(table(prescribers_fentanyl_info$Specialty))
+
+# Doctors in family practice (n=627), doctors in internal medicine (n=546), and nurse practitioners (n=219) top the list
+
+
 
 ```
 
