@@ -1,7 +1,7 @@
 ---
 title: "CKME136 Capstone Project"
 author: "Brendan Behan"
-date: '2020-03-16'
+date: '2020-03-23'
 output:
   word_document: default
   pdf_document: default
@@ -401,38 +401,13 @@ summary(prescriber_specialty_opioids)
  #Dentist            : 817     
  #(Other)            :4224 
 
+## Overall Summary
 
+## Prescribers that prescribe opioids are more likely to be male than female
 
+## The top 5 states where opioid-prescribing prescribers are California, Texas, Florida, New York, and Pennsylvania
 
-# Breakdown per Opioid - Descriptive Stats
-
-# 01. Acetaminophen.Codeine
-
-prescribers_opioid_info <- prescribers[prescribers$ACETAMINOPHEN.CODEINE >=1,]
-
-# Breakdown of prescribers prescribing Fentanyl
-
-prescribers_fentanyl_info <- prescribers[prescribers$FENTANYL >= 1,]
-
-# Get descriptive stats on healthcare professionals prescribing Fentanyl
-
-View(table(prescribers_fentanyl_info$Gender))
-
-# 682 are female, 1283 are male
-
-# Get descriptive stats on states where healthcare professionals prescribing Fentanyl
-
-View(table(prescribers_fentanyl_info$State))
-
-# California has most healthcare professionals prescribing fentanyl (n=154), then Pennsylvania (n=138), and thirdly New York (n=121). These are raw #s - not accounting for # of overall healthcare professionals in each state
-
-# Get descriptive stats on healthcare professionals specialties 
-
-View(table(prescribers_fentanyl_info$Specialty))
-
-# Doctors in family practice (n=627), doctors in internal medicine (n=546), and nurse practitioners (n=219) top the list
-
-
+## The top 5 medical specialties for prescribing opioids are Family Practice, Internal Medicine, Nurse Practitioner, Physician Assistant, and Emergency Medicine
 
 ```
 
@@ -440,6 +415,23 @@ View(table(prescribers_fentanyl_info$Specialty))
 # Finally, after gathering information from exploring information related to opioid medications & healthcare professionals that prescribe such compounds, I will aim to develop a predictive model (e.g., regression analysis) between opioid prescriptions and opioid-related overdose fatalities. 
 
 ```{r}
+
+# I now have information about opioid prescriptions and the prescribers prescribing those opioids
+
+# I want to relate opioids prescriptions/prescriber info to overdose levels
+
+# Overdoses include information on State Name, State Population, Opioid-related Overdose Deaths, State Abbreviation
+
+# Suggesting to perform a linear regression - I want to predict opioid-related overdose deaths from opioid prescription levels per state
+
+# I will use the lm function
+
+# Combining overdoses and prescribers file
+
+overdoses_prescribers_combined <- c(overdoses, prescribers)
+
+# I will need to develop a linear regression, lm, where I want to predict overdoses$Death from opioid prescriptions by state (Prescribers file - I will have to go back and filter opioid prescriptions by state and combine across all 11 opioids - to give overall #s of opioids per state)
+
 #lm(overdoses~prescribers, data = overdoses_prescribers_combined)
 
 ```
