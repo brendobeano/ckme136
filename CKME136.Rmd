@@ -21,6 +21,7 @@ library(class)
 library(gmodels)
 library(ggplot2)
 library(biganalytics)
+library(dplyr)
 
 opioids <- read.csv("C:/Users/bbehan/Desktop/ckme136/data/opioids.csv")
 prescribers <- read.csv("C:/Users/bbehan/Desktop/ckme136/data/prescriber-info.csv")
@@ -31,6 +32,12 @@ df <- data.frame()
 is.data.frame(opioids)
 is.data.frame(prescribers)
 is.data.frame(overdoses)
+
+# check for missing values
+
+sum(is.na(opioids))
+sum(is.na(prescribers))
+sum(is.na(overdoses))
 
 ```
 
@@ -128,7 +135,7 @@ print(prescriber_numbers)
 
 # Identify which prescribers have prescribed at least one of the 11 listed opioids
 
-prescriber_opioids <- filter(prescribers, (prescribers$ACETAMINOPHEN.CODEINE >= 1) | (prescribers$FENTANYL >= 1) | (prescribers$HYDROCODONE.ACETAMINOPHEN >= 1) | (prescribers$HYDROMORPHONE.HCL >= 1) | (prescribers$METHADONE.HCL >= 1) | (prescribers$MORPHINE.SULFATE >= 1) | (prescribers$MORPHINE.SULFATE.ER >= 1) | (prescribers$OXYCODONE.ACETAMINOPHEN >= 1) | (prescribers$OXYCODONE.HCL >= 1)|(prescribers$OXYCONTIN >= 1) | (prescribers$TRAMADOL.HCL >= 1))
+prescriber_opioids <- filter(prescribers, (prescribers$ACETAMINOPHEN.CODEINE >= 1) | (prescribers$FENTANYL >= 1) | (prescribers$HYDROCODONE.ACETAMINOPHEN >= 1) | (prescribers$HYDROMORPHONE.HCL >= 1) | (prescribers$METHADONE.HCL >= 1) | (prescribers$MORPHINE.SULFATE >= 1) | (prescribers$MORPHINE.SULFATE.ER >= 1) | (prescribers$OXYCODONE.ACETAMINOPHEN >= 1) | (prescribers$OXYCODONE.HCL >= 1) | (prescribers$OXYCONTIN >= 1) | (prescribers$TRAMADOL.HCL >= 1))
 
 nrow(prescriber_opioids)
 
@@ -314,7 +321,9 @@ opioids_prescriber_breakdown <- data.frame(drug_name, percent_prescribers_drug_n
 
 q <- qplot(drug_name, percent_prescribers_drug_name, data=opioids_prescriber_breakdown, geom="boxplot")
 
-q + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+q + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "% of prescribers", limits=c(0,100)) + scale_x_discrete(name="Opioid")
+
+#q + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 ```
 
@@ -347,6 +356,10 @@ summary(prescriber_gender_opioids)
  #F:4368            
  #M:8432
 
+## Plot Results
+
+plot(prescriber_gender_opioids, xlab="Gender", ylab="# of prescribers", col=c("red","blue"), ylim=c(0,10000), main="Sex Breakdown of Opioid Prescribers")
+
 
 # (ii) State - Descriptive Stats on State linked to Prescribers who are prescribing Opioids
 
@@ -376,6 +389,12 @@ summary(prescriber_state_opioids)
 
 # These are raw #s - need to use state population levels from Overdoses death to generate per capita levels
 
+# Plot
+
+prescriber_state_opioids_plot <- qplot(prescriber_state_opioids$prescribers_state, geom="bar", width="0.1")
+
+prescriber_state_opioids_plot + theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=1, size=5)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="States")
+
 # (iii) Specialty - Descriptive Stats on Specialty linked to Prescribers who are prescribing Opioids
 
 prescribers_specialty <- prescribers$Specialty
@@ -389,6 +408,14 @@ prescribers_specialty_df <- as.data.frame(prescribers_specialty)
 
 prescriber_specialty_opioids <- filter(prescribers_specialty_df, (prescribers$ACETAMINOPHEN.CODEINE >= 1) | (prescribers$FENTANYL >= 1) | (prescribers$HYDROCODONE.ACETAMINOPHEN >= 1) | (prescribers$HYDROMORPHONE.HCL >= 1) | (prescribers$METHADONE.HCL >= 1) | (prescribers$MORPHINE.SULFATE >= 1) | (prescribers$MORPHINE.SULFATE.ER >= 1) | (prescribers$OXYCODONE.ACETAMINOPHEN >= 1) | (prescribers$OXYCODONE.HCL >= 1)|(prescribers$OXYCONTIN >= 1) | (prescribers$TRAMADOL.HCL >= 1))
 
+tabulate_prescriber_specialty_opioids <- table(prescriber_specialty_opioids)
+
+View(tabulate_prescriber_specialty_opioids)
+
+# 109 different types of healthcare professionals.
+
+# Too large to lot. Determine top 5 and plot those
+
 summary(prescriber_specialty_opioids)
 
 ### Results ###
@@ -400,6 +427,18 @@ summary(prescriber_specialty_opioids)
  #Emergency Medicine : 992     
  #Dentist            : 817     
  #(Other)            :4224 
+
+# Create new Data Frame for top 5
+
+prescriber_name <- c('Family Practice', 'Internal Medicine', 'Nurse Practitioner', 'Physician Assistant', 'Emergency Medicine')
+
+prescriber_numbers <- c(2410, 2078, 1165, 1114, 992)
+
+opioid_specialty_top5 <- data.frame(prescriber_name, prescriber_numbers)
+
+opioid_specialty_top5_plot <- qplot(prescriber_name, prescriber_numbers, data=opioid_specialty_top5, geom="boxplot")
+
+opioid_specialty_top5_plot + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name = "Specialty")
 
 ## Overall Summary
 
@@ -426,13 +465,76 @@ summary(prescriber_specialty_opioids)
 
 # I will use the lm function
 
-# Combining overdoses and prescribers file
+# Sum up aross 11 opioids per prescriber
 
-overdoses_prescribers_combined <- c(overdoses, prescribers)
+colnms=c("ACETAMINOPHEN.CODEINE", "FENTANYL", "HYDROCODONE.ACETAMINOPHEN", "HYDROMORPHONE.HCL", "METHADONE.HCL", "MORPHINE.SULFATE", "MORPHINE.SULFATE.ER", "OXYCODONE.ACETAMINOPHEN", "OXYCODONE.HCL", "OXYCONTIN", "TRAMADOL.HCL")
 
-# I will need to develop a linear regression, lm, where I want to predict overdoses$Death from opioid prescriptions by state (Prescribers file - I will have to go back and filter opioid prescriptions by state and combine across all 11 opioids - to give overall #s of opioids per state)
+prescriber_opioids_sum <- prescriber_opioids$summary <- rowSums(prescriber_opioids[,colnms])
 
-#lm(overdoses~prescribers, data = overdoses_prescribers_combined)
+# Extract out "State" and "summary" columns
+
+prescriber_state_summary <- subset(prescriber_opioids, select = c("State", "summary"))
+
+# Sum per State
+
+prescriber_state_overall_sum <- aggregate(prescriber_state_summary$summary, by=list(prescriber_state_summary$State), FUN=sum)
+
+# Delete rows that don't match up with States in Overdoses file - from visual inspection there are 6 - AE, DC, GU, PR, VI, ZZ
+
+final_prescriber_state_opioid_sum <- prescriber_state_overall_sum[-c(1,9,13,42,50,56), ]
+
+# States in Presciber File are in Alphabetical Order but States in Overdose File are not - need to order States
+
+overdoses_states_ordered <- overdoses[order(overdoses$Abbrev),]
+
+#Need to take out comma from Deaths column in overdoses_states_ordered
+
+overdose_deaths <- overdoses_states_ordered$Deaths
+
+overdose_deaths_no_comma <- gsub(",", "", overdose_deaths)
+
+# Check if file is numeric
+
+is.numeric(overdose_deaths_no_comma)
+
+overdose_deaths_numeric <- as.numeric(overdose_deaths_no_comma)
+
+# Create data frame
+
+states_ordered_prescription_overdose <- data.frame(final_prescriber_state_opioid_sum$x, overdose_deaths_numeric)
+
+#Run linear regresson (Deaths is DV, Opioids Prescriptions per State is IV)
+
+prescriptions_overdoses_lm <- lm(formula = overdose_deaths_numeric ~ final_prescriber_state_opioid_sum.x, data=states_ordered_prescription_overdose)
+
+summary(prescriptions_overdoses_lm)
+
+## Results ##
+
+# Call:
+# lm(formula = overdose_deaths_numeric ~ final_prescriber_state_opioid_sum.x, 
+#     data = states_ordered_prescription_overdose)
+
+# Residuals:
+#     Min      1Q  Median      3Q     Max 
+# -602.13 -152.10  -25.87  174.82  816.64 
+# 
+# Coefficients:
+#                                      Estimate Std. Error
+# (Intercept)                         64.033622  65.909497
+# final_prescriber_state_opioid_sum.x  0.020553   0.001122
+#                                     t value Pr(>|t|)    
+# (Intercept)                           0.972    0.336    
+# final_prescriber_state_opioid_sum.x  18.317   <2e-16 ***
+# ---
+# Signif. codes:  
+# 0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 321 on 48 degrees of freedom
+# Multiple R-squared:  0.8748,	Adjusted R-squared:  0.8722 
+# F-statistic: 335.5 on 1 and 48 DF,  p-value: < 2.2e-16
+
+
 
 ```
 
