@@ -317,11 +317,17 @@ percent_prescribers_drug_name <- c(8.532, 7.86, 40.176, 2.888, 3.46, 2.696, 6.95
 
 opioids_prescriber_breakdown <- data.frame(drug_name, percent_prescribers_drug_name)
 
-# plot using ggplot2
+# Order Opioids Prescriber Breakdown - Ascending to Descending
 
-q <- qplot(drug_name, percent_prescribers_drug_name, data=opioids_prescriber_breakdown, geom="boxplot")
+ordered_opioids_prescriber_breakdown <- arrange(opioids_prescriber_breakdown, desc(percent_prescribers_drug_name))
 
-q + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "% of prescribers", limits=c(0,100)) + scale_x_discrete(name="Opioid")
+# plot using qplot
+
+#q <- qplot(drug_name, percent_prescribers_drug_name, data=ordered_opioids_prescriber_breakdown, geom="boxplot") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "% of prescribers", limits=c(0,100)) + scale_x_discrete(name="Opioid")
+
+plot_opioids_prescriber_breakdown <- ggplot(data = ordered_opioids_prescriber_breakdown,mapping= aes(x = reorder(drug_name, -percent_prescribers_drug_name), percent_prescribers_drug_name)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "% of prescribers", limits=c(0,100)) + scale_x_discrete(name="Opioid")
+
+plot_opioids_prescriber_breakdown
 
 #q + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -376,6 +382,38 @@ prescriber_state_opioids <- filter(prescribers_state_df, (prescribers$ACETAMINOP
 
 summary(prescriber_state_opioids)
 
+# Count frequency occurrence of state and turn into Data Frame
+
+table_prescriber_state_opioids <- table(prescriber_state_opioids)
+
+# Check if Data Frame 
+
+is.data.frame(table_prescriber_state_opioids)
+
+# Create as Data Frame
+
+df_prescriber_state_opioids <- data.frame(table_prescriber_state_opioids)
+
+# Plot
+
+plot_df_prescriber_state_opioids <- ggplot(data = df_prescriber_state_opioids,mapping= aes(x = reorder(prescriber_state_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers", limits=c(0,1500)) + scale_x_discrete(name="States")
+
+plot_df_prescriber_state_opioids
+
+# Plot states with highest level of prescriber #s
+
+summary(df_prescriber_state_opioids)
+
+df_prescriber_state_opioids_3rd_quartile <- filter(df_prescriber_state_opioids, (df_prescriber_state_opioids$Freq >= 291))
+
+## Plot
+
+plot_df_prescriber_state_opioids_3rd_quartile <- ggplot(data = df_prescriber_state_opioids_3rd_quartile,mapping= aes(x = reorder(prescriber_state_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers", limits=c(0,1500)) + scale_x_discrete(name="States")
+
+plot_df_prescriber_state_opioids_3rd_quartile
+
+## Calculate per capita
+
 ### Results ###
 
  #prescribers_state
@@ -391,9 +429,56 @@ summary(prescriber_state_opioids)
 
 # Plot
 
-prescriber_state_opioids_plot <- qplot(prescriber_state_opioids$prescribers_state, geom="bar", width="0.1")
+# Want to use State Population levels from Overdoses File
 
-prescriber_state_opioids_plot + theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=1, size=5)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="States")
+# Need to delete 7 state entries (AA, AE, DC, GU, PR, VI, ZZ) from df_prescriber_state_opioids so that it matches the states in Overdoses file
+
+cleaned_df_prescriber_state_opioids <- df_prescriber_state_opioids[-c(1, 2,10,14,43,51,57), ]
+
+# Clean overdoses file
+
+# States in Presciber File are in Alphabetical Order but States in Overdose File are not - need to order States
+
+overdoses_states_ordered <- overdoses[order(overdoses$Abbrev),]
+
+overdose_states_ordered_cleaned_population <- gsub(",", "", overdoses_states_ordered$Population)
+
+overdose_states_ordered_cleaned_deaths <- gsub(",", "", overdoses_states_ordered$Deaths)
+
+# Create Data Frame
+
+per_capita_state_opioids <- data.frame(cleaned_df_prescriber_state_opioids, overdose_states_ordered_cleaned_population, overdose_states_ordered_cleaned_deaths)
+
+# Per Capita Opioids - Population
+
+per_capita_opioid_populations <- per_capita_state_opioids$Freq / as.numeric(as.character(per_capita_state_opioids$overdose_states_ordered_cleaned_population))
+
+# Per Capita Deaths - Population
+
+per_capita_deaths_populations <- as.numeric(as.character(per_capita_state_opioids$overdose_states_ordered_cleaned_deaths)) / as.numeric(as.character(per_capita_state_opioids$overdose_states_ordered_cleaned_population))
+
+# Create Data Frame
+
+final_per_capita_state_opioids <- data.frame(per_capita_state_opioids$prescriber_state_opioids, per_capita_opioid_populations)
+
+# Plot
+
+plot_per_capita_prescriber_state_opioids <- ggplot(data = final_per_capita_state_opioids,mapping= aes(x = reorder(per_capita_state_opioids.prescriber_state_opioids, -per_capita_opioid_populations), per_capita_opioid_populations)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="States")
+
+plot_per_capita_prescriber_state_opioids
+
+# Plot states with highest level of prescriber #s
+
+summary(final_per_capita_state_opioids)
+
+# Filter by 3rd Quartile level - 4.695e-05
+
+df_final_per_capita_state_opioids_3rd_quartile <- filter(final_per_capita_state_opioids, (final_per_capita_state_opioids$per_capita_opioid_populations >= 4.695e-05))
+
+plot_per_capita_prescriber_state_opioids_3rd_quartile <- ggplot(data = df_final_per_capita_state_opioids_3rd_quartile,mapping= aes(x = reorder(per_capita_state_opioids.prescriber_state_opioids, -per_capita_opioid_populations), per_capita_opioid_populations)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="States")
+
+plot_per_capita_prescriber_state_opioids_3rd_quartile
+
 
 # (iii) Specialty - Descriptive Stats on Specialty linked to Prescribers who are prescribing Opioids
 
@@ -412,9 +497,35 @@ tabulate_prescriber_specialty_opioids <- table(prescriber_specialty_opioids)
 
 View(tabulate_prescriber_specialty_opioids)
 
+# Convert to a Data Frame
+
+df_tabulate_prescriber_specialty_opioids <- data.frame(tabulate_prescriber_specialty_opioids)
+
 # 109 different types of healthcare professionals.
 
-# Too large to lot. Determine top 5 and plot those
+plot_df_prescriber_specialty_opioids <- ggplot(data = df_tabulate_prescriber_specialty_opioids,mapping= aes(x = reorder(prescriber_specialty_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="Specialty")
+
+plot_df_prescriber_specialty_opioids
+
+# Too large to lot. Look at Summary and 3rd quartile
+
+summary(df_tabulate_prescriber_specialty_opioids)
+
+# Q3 = 54.0
+
+df_prescriber_specialty_opioids_3rd_quartile <- filter(df_tabulate_prescriber_specialty_opioids, (df_tabulate_prescriber_specialty_opioids$Freq >= 54.0))
+
+plot_df_prescriber_specialty_opioids_3rd_quartile <- ggplot(data = df_prescriber_specialty_opioids_3rd_quartile,mapping= aes(x = reorder(prescriber_specialty_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="Specialty")
+
+plot_df_prescriber_specialty_opioids_3rd_quartile
+
+# look at top 8
+
+df_prescriber_specialty_opioids_top_8 <- filter(df_tabulate_prescriber_specialty_opioids, (df_tabulate_prescriber_specialty_opioids$Freq >= 420.0))
+
+plot_df_prescriber_specialty_opioids_top_8 <- ggplot(data = df_prescriber_specialty_opioids_top_8,mapping= aes(x = reorder(prescriber_specialty_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="Specialty")
+
+plot_df_prescriber_specialty_opioids_top_8 
 
 summary(prescriber_specialty_opioids)
 
@@ -540,8 +651,108 @@ summary(prescriptions_overdoses_lm)
 
 
 ```{r}
+## Run Multiple Linear Regression
+
+# DV = levels of opioid prescription
+
+# Multiple IV
+
+# 01. Gender
+# 02. State
+# 03. Category of Specialty
+
+# Sum up aross 11 opioids per prescriber
+
+colnms=c("ACETAMINOPHEN.CODEINE", "FENTANYL", "HYDROCODONE.ACETAMINOPHEN", "HYDROMORPHONE.HCL", "METHADONE.HCL", "MORPHINE.SULFATE", "MORPHINE.SULFATE.ER", "OXYCODONE.ACETAMINOPHEN", "OXYCODONE.HCL", "OXYCONTIN", "TRAMADOL.HCL")
+
+prescriber_opioids$summary <- rowSums(prescriber_opioids[,colnms])
+
+# Multivariate Linear Regression - Gender and State
+
+opioid_prescriptions_gender_state_lm <- lm(formula = summary ~ Gender + State, data=prescriber_opioids)
+
+summary(opioid_prescriptions_gender_state_lm)
+
+# Call:
+# lm(formula = summary ~ Gender + State, data = prescriber_opioids)
+# 
+# Residuals:
+#     Min      1Q  Median      3Q     Max 
+#  -297.7  -141.6   -90.1     4.9 15018.0 
+# 
+# Coefficients:
+#             Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  205.888    264.829   0.777    0.437    
+# GenderM       51.224      7.042   7.274 3.69e-13 ***
+# StateAK     -188.379    276.587  -0.681    0.496    
+# StateAL       26.280    265.975   0.099    0.921    
+# StateAR      -30.118    266.658  -0.113    0.910    
+# StateAZ      -56.182    265.740  -0.211    0.833    
+# StateCA      -89.645    265.012  -0.338    0.735    
+# StateCO     -121.178    266.058  -0.455    0.649    
+# StateCT     -154.722    266.457  -0.581    0.561    
+# StateDC     -193.136    274.438  -0.704    0.482    
+# StateDE     -107.222    271.039  -0.396    0.692    
+# StateFL      -41.104    265.164  -0.155    0.877    
+# StateGA      -30.132    265.561  -0.113    0.910    
+# StateGU     -240.112    458.670  -0.523    0.601    
+# StateHI     -143.978    272.268  -0.529    0.597    
+# StateIA      -63.449    267.203  -0.237    0.812    
+# StateID      -88.699    268.097  -0.331    0.741    
+# StateIL     -100.333    265.337  -0.378    0.705    
+# StateIN        2.734    265.717   0.010    0.992    
+# StateKS      -43.897    267.061  -0.164    0.869    
+# StateKY      -12.781    266.283  -0.048    0.962    
+# StateLA       51.556    266.106   0.194    0.846    
+# StateMA     -107.656    265.634  -0.405    0.685    
+# StateMD     -110.861    265.831  -0.417    0.677    
+# StateME      -90.159    268.015  -0.336    0.737    
+# StateMI      -58.837    265.353  -0.222    0.825    
+# StateMN     -103.547    266.029  -0.389    0.697    
+# StateMO      -52.387    265.842  -0.197    0.844    
+# StateMS       -1.898    266.974  -0.007    0.994    
+# StateMT      -90.975    270.268  -0.337    0.736    
+# StateNC      -29.935    265.410  -0.113    0.910    
+# StateND      -86.500    272.482  -0.317    0.751    
+# StateNE     -107.353    268.317  -0.400    0.689    
+# StateNH     -151.820    269.183  -0.564    0.573    
+# StateNJ     -131.810    265.769  -0.496    0.620    
+# StateNM     -112.597    268.138  -0.420    0.675    
+# StateNV      -35.120    267.553  -0.131    0.896    
+# StateNY     -124.351    265.178  -0.469    0.639    
+# StateOH      -60.272    265.334  -0.227    0.820    
+# StateOK      -45.638    266.283  -0.171    0.864    
+# StateOR      -80.866    266.189  -0.304    0.761    
+# StatePA      -67.987    265.258  -0.256    0.798    
+# StatePR     -130.517    267.297  -0.488    0.625    
+# StateRI     -114.245    269.257  -0.424    0.671    
+# StateSC      -60.842    265.988  -0.229    0.819    
+# StateSD      -69.105    271.684  -0.254    0.799    
+# StateTN       -7.245    265.613  -0.027    0.978    
+# StateTX      -91.689    265.116  -0.346    0.729    
+# StateUT     -136.181    267.473  -0.509    0.611    
+# StateVA      -90.700    265.697  -0.341    0.733    
+# StateVI     -106.388    374.508  -0.284    0.776    
+# StateVT     -101.168    272.266  -0.372    0.710    
+# StateWA      -97.212    265.638  -0.366    0.714    
+# StateWI      -72.304    265.850  -0.272    0.786    
+# StateWV      -64.480    267.184  -0.241    0.809    
+# StateWY      -35.288    276.587  -0.128    0.898    
+# StateZZ     -245.112    458.670  -0.534    0.593    
+# ---
+# Signif. codes:  
+# 0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 374.5 on 12743 degrees of freedom
+# Multiple R-squared:  0.01726,	Adjusted R-squared:  0.01294 
+# F-statistic: 3.997 on 56 and 12743 DF,  p-value: < 2.2e-16
 
 
+# Multivariate Linear Regression - Gender and State
+
+opioid_prescriptions_gender_state_specialty_lm <- lm(formula = summary ~ Gender + State + Specialty, data=prescriber_opioids)
+
+summary(opioid_prescriptions_gender_state_specialty_lm)
 
 ```
 
