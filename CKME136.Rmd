@@ -321,15 +321,11 @@ opioids_prescriber_breakdown <- data.frame(drug_name, percent_prescribers_drug_n
 
 ordered_opioids_prescriber_breakdown <- arrange(opioids_prescriber_breakdown, desc(percent_prescribers_drug_name))
 
-# plot using qplot
+# plot using ggplot
 
-#q <- qplot(drug_name, percent_prescribers_drug_name, data=ordered_opioids_prescriber_breakdown, geom="boxplot") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "% of prescribers", limits=c(0,100)) + scale_x_discrete(name="Opioid")
-
-plot_opioids_prescriber_breakdown <- ggplot(data = ordered_opioids_prescriber_breakdown,mapping= aes(x = reorder(drug_name, -percent_prescribers_drug_name), percent_prescribers_drug_name)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "% of prescribers", limits=c(0,100)) + scale_x_discrete(name="Opioid")
+plot_opioids_prescriber_breakdown <- ggplot(data = ordered_opioids_prescriber_breakdown,mapping= aes(x = reorder(drug_name, -percent_prescribers_drug_name), percent_prescribers_drug_name)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "% of prescribers", limits=c(0,45)) + scale_x_discrete(name="Opioid") + ggtitle("% of Healthcare Professionals Prescribing Opioids") + theme(plot.title = element_text(hjust = 0.5))
 
 plot_opioids_prescriber_breakdown
-
-#q + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 ```
 
@@ -396,7 +392,7 @@ df_prescriber_state_opioids <- data.frame(table_prescriber_state_opioids)
 
 # Plot
 
-plot_df_prescriber_state_opioids <- ggplot(data = df_prescriber_state_opioids,mapping= aes(x = reorder(prescriber_state_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers", limits=c(0,1500)) + scale_x_discrete(name="States")
+plot_df_prescriber_state_opioids <- ggplot(data = df_prescriber_state_opioids,mapping= aes(x = reorder(prescriber_state_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers", limits=c(0,1500)) + scale_x_discrete(name="States") + ggtitle("State Breakdown of Opioid Prescribers") + theme(plot.title = element_text(hjust = 0.5))
 
 plot_df_prescriber_state_opioids
 
@@ -408,7 +404,7 @@ df_prescriber_state_opioids_3rd_quartile <- filter(df_prescriber_state_opioids, 
 
 ## Plot
 
-plot_df_prescriber_state_opioids_3rd_quartile <- ggplot(data = df_prescriber_state_opioids_3rd_quartile,mapping= aes(x = reorder(prescriber_state_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers", limits=c(0,1500)) + scale_x_discrete(name="States")
+plot_df_prescriber_state_opioids_3rd_quartile <- ggplot(data = df_prescriber_state_opioids_3rd_quartile,mapping= aes(x = reorder(prescriber_state_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers", limits=c(0,1500)) + scale_x_discrete(name="States") + ggtitle("State Breakdown of Opioid Prescribers - Upper Quartile") + theme(plot.title = element_text(hjust = 0.5))
 
 plot_df_prescriber_state_opioids_3rd_quartile
 
@@ -463,7 +459,7 @@ final_per_capita_state_opioids <- data.frame(per_capita_state_opioids$prescriber
 
 # Plot
 
-plot_per_capita_prescriber_state_opioids <- ggplot(data = final_per_capita_state_opioids,mapping= aes(x = reorder(per_capita_state_opioids.prescriber_state_opioids, -per_capita_opioid_populations), per_capita_opioid_populations)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="States")
+plot_per_capita_prescriber_state_opioids <- ggplot(data = final_per_capita_state_opioids,mapping= aes(x = reorder(per_capita_state_opioids.prescriber_state_opioids, -per_capita_opioid_populations), per_capita_opioid_populations)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="States") + ggtitle("State Breakdown of Opioid Prescribers - Per Capita") + theme(plot.title = element_text(hjust = 0.5))
 
 plot_per_capita_prescriber_state_opioids
 
@@ -475,7 +471,7 @@ summary(final_per_capita_state_opioids)
 
 df_final_per_capita_state_opioids_3rd_quartile <- filter(final_per_capita_state_opioids, (final_per_capita_state_opioids$per_capita_opioid_populations >= 4.695e-05))
 
-plot_per_capita_prescriber_state_opioids_3rd_quartile <- ggplot(data = df_final_per_capita_state_opioids_3rd_quartile,mapping= aes(x = reorder(per_capita_state_opioids.prescriber_state_opioids, -per_capita_opioid_populations), per_capita_opioid_populations)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="States")
+plot_per_capita_prescriber_state_opioids_3rd_quartile <- ggplot(data = df_final_per_capita_state_opioids_3rd_quartile,mapping= aes(x = reorder(per_capita_state_opioids.prescriber_state_opioids, -per_capita_opioid_populations), per_capita_opioid_populations)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="States") + ggtitle("State Breakdown of Opioid Prescribers - Per Capita - Upper Quartile") + theme(plot.title = element_text(hjust = 0.5))
 
 plot_per_capita_prescriber_state_opioids_3rd_quartile
 
@@ -503,7 +499,7 @@ df_tabulate_prescriber_specialty_opioids <- data.frame(tabulate_prescriber_speci
 
 # 109 different types of healthcare professionals.
 
-plot_df_prescriber_specialty_opioids <- ggplot(data = df_tabulate_prescriber_specialty_opioids,mapping= aes(x = reorder(prescriber_specialty_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="Specialty")
+plot_df_prescriber_specialty_opioids <- ggplot(data = df_tabulate_prescriber_specialty_opioids,mapping= aes(x = reorder(prescriber_specialty_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="Specialty") + ggtitle("Specialty Breakdown of Opioid Prescribers") + theme(plot.title = element_text(hjust = 0.5))
 
 plot_df_prescriber_specialty_opioids
 
@@ -515,15 +511,24 @@ summary(df_tabulate_prescriber_specialty_opioids)
 
 df_prescriber_specialty_opioids_3rd_quartile <- filter(df_tabulate_prescriber_specialty_opioids, (df_tabulate_prescriber_specialty_opioids$Freq >= 54.0))
 
-plot_df_prescriber_specialty_opioids_3rd_quartile <- ggplot(data = df_prescriber_specialty_opioids_3rd_quartile,mapping= aes(x = reorder(prescriber_specialty_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="Specialty")
+plot_df_prescriber_specialty_opioids_3rd_quartile <- ggplot(data = df_prescriber_specialty_opioids_3rd_quartile,mapping= aes(x = reorder(prescriber_specialty_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="Specialty") + ggtitle("Specialty Breakdown of Opioid Prescribers - Upper Quartile") + theme(plot.title = element_text(hjust = 0.5))
 
 plot_df_prescriber_specialty_opioids_3rd_quartile
 
+
 # look at top 8
+
+sum_top_8 <- sum(df_tabulate_prescriber_specialty_opioids$Freq[25], df_tabulate_prescriber_specialty_opioids$Freq[42], df_tabulate_prescriber_specialty_opioids$Freq[63], df_tabulate_prescriber_specialty_opioids$Freq[81], df_tabulate_prescriber_specialty_opioids$Freq[22], df_tabulate_prescriber_specialty_opioids$Freq[19], df_tabulate_prescriber_specialty_opioids$Freq[70], df_tabulate_prescriber_specialty_opioids$Freq [29])
+
+sum_top_8_percent <- (sum_top_8/12800) * 100
+
+View(sum_top_8_percent)
+
+# top 8 account for ~74.57% of dataset - lowest value is 420
 
 df_prescriber_specialty_opioids_top_8 <- filter(df_tabulate_prescriber_specialty_opioids, (df_tabulate_prescriber_specialty_opioids$Freq >= 420.0))
 
-plot_df_prescriber_specialty_opioids_top_8 <- ggplot(data = df_prescriber_specialty_opioids_top_8,mapping= aes(x = reorder(prescriber_specialty_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="Specialty")
+plot_df_prescriber_specialty_opioids_top_8 <- ggplot(data = df_prescriber_specialty_opioids_top_8,mapping= aes(x = reorder(prescriber_specialty_opioids, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers") + scale_x_discrete(name="Specialty") + ggtitle("Specialty Breakdown of Opioid Prescribers - Top 8") + theme(plot.title = element_text(hjust = 0.5))
 
 plot_df_prescriber_specialty_opioids_top_8 
 
@@ -565,6 +570,353 @@ opioid_specialty_top5_plot + theme(axis.text.x = element_text(angle = 90, hjust 
 # Finally, after gathering information from exploring information related to opioid medications & healthcare professionals that prescribe such compounds, I will aim to develop a predictive model (e.g., regression analysis) between opioid prescriptions and opioid-related overdose fatalities. 
 
 ```{r}
+## (i) Sex/States vs. Opioid Prescriptions
+
+## Run Multiple Linear Regression
+
+# DV = levels of opioid prescription
+
+# Multiple IV
+
+# 01. Gender
+# 02. State
+
+# Sum up aross 11 opioids per prescriber
+
+colnms=c("ACETAMINOPHEN.CODEINE", "FENTANYL", "HYDROCODONE.ACETAMINOPHEN", "HYDROMORPHONE.HCL", "METHADONE.HCL", "MORPHINE.SULFATE", "MORPHINE.SULFATE.ER", "OXYCODONE.ACETAMINOPHEN", "OXYCODONE.HCL", "OXYCONTIN", "TRAMADOL.HCL")
+
+prescriber_opioids$summary <- rowSums(prescriber_opioids[,colnms])
+
+# Multivariate Linear Regression - Gender and State
+
+opioid_prescriptions_gender_state_lm <- lm(formula = summary ~ Gender + State, data=prescriber_opioids)
+
+summary(opioid_prescriptions_gender_state_lm)
+
+# Call:
+# lm(formula = summary ~ Gender + State, data = prescriber_opioids)
+# 
+# Residuals:
+#     Min      1Q  Median      3Q     Max 
+#  -297.7  -141.6   -90.1     4.9 15018.0 
+# 
+# Coefficients:
+#             Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  205.888    264.829   0.777    0.437    
+# GenderM       51.224      7.042   7.274 3.69e-13 ***
+# StateAK     -188.379    276.587  -0.681    0.496    
+# StateAL       26.280    265.975   0.099    0.921    
+# StateAR      -30.118    266.658  -0.113    0.910    
+# StateAZ      -56.182    265.740  -0.211    0.833    
+# StateCA      -89.645    265.012  -0.338    0.735    
+# StateCO     -121.178    266.058  -0.455    0.649    
+# StateCT     -154.722    266.457  -0.581    0.561    
+# StateDC     -193.136    274.438  -0.704    0.482    
+# StateDE     -107.222    271.039  -0.396    0.692    
+# StateFL      -41.104    265.164  -0.155    0.877    
+# StateGA      -30.132    265.561  -0.113    0.910    
+# StateGU     -240.112    458.670  -0.523    0.601    
+# StateHI     -143.978    272.268  -0.529    0.597    
+# StateIA      -63.449    267.203  -0.237    0.812    
+# StateID      -88.699    268.097  -0.331    0.741    
+# StateIL     -100.333    265.337  -0.378    0.705    
+# StateIN        2.734    265.717   0.010    0.992    
+# StateKS      -43.897    267.061  -0.164    0.869    
+# StateKY      -12.781    266.283  -0.048    0.962    
+# StateLA       51.556    266.106   0.194    0.846    
+# StateMA     -107.656    265.634  -0.405    0.685    
+# StateMD     -110.861    265.831  -0.417    0.677    
+# StateME      -90.159    268.015  -0.336    0.737    
+# StateMI      -58.837    265.353  -0.222    0.825    
+# StateMN     -103.547    266.029  -0.389    0.697    
+# StateMO      -52.387    265.842  -0.197    0.844    
+# StateMS       -1.898    266.974  -0.007    0.994    
+# StateMT      -90.975    270.268  -0.337    0.736    
+# StateNC      -29.935    265.410  -0.113    0.910    
+# StateND      -86.500    272.482  -0.317    0.751    
+# StateNE     -107.353    268.317  -0.400    0.689    
+# StateNH     -151.820    269.183  -0.564    0.573    
+# StateNJ     -131.810    265.769  -0.496    0.620    
+# StateNM     -112.597    268.138  -0.420    0.675    
+# StateNV      -35.120    267.553  -0.131    0.896    
+# StateNY     -124.351    265.178  -0.469    0.639    
+# StateOH      -60.272    265.334  -0.227    0.820    
+# StateOK      -45.638    266.283  -0.171    0.864    
+# StateOR      -80.866    266.189  -0.304    0.761    
+# StatePA      -67.987    265.258  -0.256    0.798    
+# StatePR     -130.517    267.297  -0.488    0.625    
+# StateRI     -114.245    269.257  -0.424    0.671    
+# StateSC      -60.842    265.988  -0.229    0.819    
+# StateSD      -69.105    271.684  -0.254    0.799    
+# StateTN       -7.245    265.613  -0.027    0.978    
+# StateTX      -91.689    265.116  -0.346    0.729    
+# StateUT     -136.181    267.473  -0.509    0.611    
+# StateVA      -90.700    265.697  -0.341    0.733    
+# StateVI     -106.388    374.508  -0.284    0.776    
+# StateVT     -101.168    272.266  -0.372    0.710    
+# StateWA      -97.212    265.638  -0.366    0.714    
+# StateWI      -72.304    265.850  -0.272    0.786    
+# StateWV      -64.480    267.184  -0.241    0.809    
+# StateWY      -35.288    276.587  -0.128    0.898    
+# StateZZ     -245.112    458.670  -0.534    0.593    
+# ---
+# Signif. codes:  
+# 0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Residual standard error: 374.5 on 12743 degrees of freedom
+# Multiple R-squared:  0.01726,	Adjusted R-squared:  0.01294 
+# F-statistic: 3.997 on 56 and 12743 DF,  p-value: < 2.2e-16
+
+# Plot Results
+
+plot(prescriber_opioids$Gender, prescriber_opioids$summary, xlab="Sex", ylab="Opioid Prescriptions", main="Sex vs. Opioid Prescriptions")
+
+abline(opioid_prescriptions_gender_state_lm)
+
+# Looks like 2 outliers in male dataset - could be driving the effect? Identify 2 outliers, remove, and re-run multivariate linear regression
+
+# Identify max value in summary column
+
+which.max(prescriber_opioids$summary)
+
+prescriber_opioids[7354,]
+
+#Prescriber is male, based in Florda, and healthcare professional specialty is Interventional Pain Management - 15234 prescriptions
+
+# Remove from File
+
+remove_one_max_prescriber_opioids <- prescriber_opioids[-c(7354),]
+
+# check it has been removed
+
+nrow(remove_one_max_prescriber_opioids)
+
+
+# Identify max of new dataset
+
+which.max(remove_one_max_prescriber_opioids$summary)
+
+remove_one_max_prescriber_opioids[5118,]
+
+#Prescriber is male, based in Louisiana, and healthcare professional specialty is Physical Medicine and Rehabilitation - 14674 prescriptions
+
+remove_two_max_prescriber_opioids <- remove_one_max_prescriber_opioids[-c(5118),]
+
+# Check that the two max values have been removed
+
+max(remove_two_max_prescriber_opioids$summary)
+
+
+# Re-run linear regression with two max values of men taken out
+
+opioid_prescriptions_gender_state_remove_two_max_male_lm <- lm(formula = summary ~ Gender + State, data=remove_two_max_prescriber_opioids)
+
+summary(opioid_prescriptions_gender_state_remove_two_max_male_lm)
+
+# Plot
+
+plot(remove_two_max_prescriber_opioids$Gender, remove_two_max_prescriber_opioids$summary, xlab="Gender", ylab="Opioid Prescriptions")
+
+abline(lm(summary ~ Gender, remove_two_max_prescriber_opioids))
+
+
+
+## (ii) Sex/States/Specialty vs. Opioid Prescriptions
+
+# Multivariate Linear Regression - Gender and State and Specialty
+
+# Collapse Specialties into 10 Categories:
+
+# 01. Family Practice
+
+# Clinic/Center
+# Family Medicine
+# Family Practice
+# General Practice
+
+
+# 02. Internal Medicine
+
+# Addiction Medicine
+# Allergy/Immunology
+# Anesthesiology
+# Cardiology
+# Dermatology
+# Endocrinology
+# Gastroenterology
+# Geriatric Medicine
+# Gynecological/Oncology
+# Hematology
+# Hematology/Oncology
+# Hospitalist
+# Infectious Disease
+# Internal Medicine
+# Interventional Radiology
+# Nephrology
+# Neurology
+# Obstetrics/Gynecology
+# Ophthalmology
+# Otolaryngology
+# Preventive Medicine
+# Rheumatology
+# Sleep Medicine
+# Urology
+
+
+# 03. Nurses
+
+# Certified Clinical Nurse Specialist
+# Certified Nurse Midwife
+# CRNA
+# Licensed Practical Nurse
+# Midwife
+# Nurse Practitioner
+# Registered Nurse
+
+
+# 04. Physician Assistant
+
+# Physician Assistant
+
+
+# 05. Emergency Medicine
+
+# Critical Care (Intensivists)
+# Emergency Medicine
+# General Acute Care Hospital
+# Interventional Pain Management
+# Personal Emergency Response Attendant
+
+
+# 06. Dentist/Maxillofacial & Oral Surgery
+
+# Dentist
+# Maxillofacial Surgery
+# Oral & Maxillofacial Surgery
+# Oral Surgery (dentists only)
+
+
+# 07. Surgery
+
+# Cardiac Surgery
+# Colon & Rectal Surgery
+# Colorectal Surgery (formerly proctology)
+# General Surgery
+# Hand Surgery
+# Neurological Surgery
+# Neurosurgery
+# Orthopaedic Surgery
+# Orthopedic Surgery
+# Plastic and Reconstructive Surgery
+# Plastic Surgery
+# Surgery
+# Surgical Oncology
+# Thoracic Surgery
+# Thoracic Surgery (Cardiothoracic Vascular Surgery)
+# Vascular Surgery
+
+
+# 08. Physical Therapy/Sports Medicine
+
+# Neuromusculoskeletal Medicine, Sports Medicine
+# Osteopathic Manipulative Medicine
+# Physical Medicine and Rehabilitation
+# Physical Therapist
+# Rehabilitation Agency
+# Sports Medicine
+
+
+# 09. Other
+
+# Behavioral Analyst
+# Cardiac Electrophysiology
+# Chiropractic
+# Clinical Pharmacology
+# Community Health Worker
+# Counselor
+# Diagnostic Radiology
+# Geriatric Psychiatry
+# Health Maintenance Organization
+# Homeopath
+# Hospice and Palliative Care
+# Hospital (Dmercs Only)
+# Legal Medicine
+# Licensed Clinical Social Worker
+# Medical Genetics
+# Medical Genetics, Ph.D. Medical Genetics
+# Medical Oncology
+# Military Health Care Provider
+# Multispecialty Clinic/Group Practice
+# Naturopath
+# Neuropsychiatry
+# Nuclear Medicine
+# Optometry
+# Pain Management
+# Pathology
+# Pediatric Medicine
+# Pharmacist
+# Pharmacy Technician
+# Podiatry
+# Preferred Provider Organization
+# Psychiatry
+# Psychiatry & Neurology
+# Psychologist
+# Psychologist (billing independently)
+# Pulmonary Disease
+# Radiation Oncology
+# Slide Preparation Facility
+# Specialist
+# Specialist/Technologist
+# Student in an Organized Health Care Education/Training Program
+# Unknown Physician Specialty Code
+# Unknown Supplier/Provider
+
+# Recode Specialties into 10 categories
+
+prescriber_opioids_specialty_recoding <- prescriber_opioids$recode <- recode(prescriber_opioids$Specialty, "Clinic/Center" = "Family Practice", "Family Medicine" = "Family Practice", "General Practice" = "Family Practice", "Addiction Medicine" = "Internal Medicine", "Allergy/Immunology" = "Internal Medicine", "Anesthesiology" = "Internal Medicine", "Cardiology" = "Internal Medicine", "Dermatology" = "Internal Medicine", "Dermatology" = "Internal Medicine", "Endocrinology" = "Internal Medicine", "Gastroenterology" = "Internal Medicine", "Geriatric Medicine" = "Internal Medicine", "Gynecological/Oncology" = "Internal Medicine", "Hematology" = "Internal Medicine", "Hematology/Oncology" = "Internal Medicine", "Hospitalist" = "Internal Medicine", "Infectious Disease" = "Internal Medicine", "Interventional Radiology" = "Internal Medicine", "Nephrology" = "Internal Medicine", "Neurology" = "Internal Medicine", "Obstetrics/Gynecology" = "Internal Medicine", "Ophthalmology" = "Internal Medicine", "Otolaryngology" = "Internal Medicine", "Preventive Medicine" = "Internal Medicine", "Rheumatology" = "Internal Medicine", "Sleep Medicine" = "Internal Medicine", "Urology" = "Internal Medicine", "Certified Clinical Nurse Specialist" = "Nurse", "Certified Nurse Midwife" = "Nurse", "CRNA" = "Nurse", "Licensed Practical Nurse" = "Nurse", "Midwife" = "Nurse", "Nurse Practitioner" = "Nurse", "Registered Nurse" = "Nurse", "Critical Care (Intensivists)" = "Emergency Medicine", "General Acute Care Hospital" = "Emergency Medicine", "Interventional Pain Management" = "Emergency Medicine", "Personal Emergency Response Attendant" = "Emergency Medicine", "Maxillofacial Surgery" = "Dentist", "Oral & Maxillofacial Surgery" = "Dentist", "Oral Surgery (dentists only)" = "Dentist", "Cardiac Surgery" = "Surgery", "Colon & Rectal Surgery" = "Surgery", "Colorectal Surgery (formerly proctology)" = "Surgery", "General Surgery" = "Surgery", "Hand Surgery" = "Surgery", "Neurological Surgery" = "Surgery", "Neurosurgery" = "Surgery", "Orthopaedic Surgery" = "Surgery", "Orthopedic Surgery" = "Surgery", "Plastic and Reconstructive Surgery" = "Surgery", "Plastic Surgery" = "Surgery", "Surgical Oncology" = "Surgery", "Thoracic Surgery" = "Surgery", "Thoracic Surgery (Cardiothoracic Vascular Surgery)" = "Surgery", "Vascular Surgery" = "Surgery", "Neuromusculoskeletal Medicine, Sports Medicine" = "Physical Therapist", "Osteopathic Manipulative Medicine" = "Physical Therapist", "Physical Medicine and Rehabilitation" = "Physical Therapist", "Rehabilitation Agency" = "Physical Therapist", "Sports Medicine" = "Physical Therapist", "Clinical Pharmacology" = "Other", "Pharmacy Technician" = "Other", "Pharmacist" = "Other", "Behavioral Analyst" = "Other", "Cardiac Electrophysiology" = "Other", "Chiropractic" = "Other", "Community Health Worker" = "Other", "Counselor" = "Other", "Diagnostic Radiology" = "Other", "Geriatric Psychiatry" = "Other", "Health Maintenance Organization" = "Other", "Homeopath" = "Other", "Hospice and Palliative Care" = "Other", "Hospital (Dmercs Only)" = "Other", "Legal Medicine" = "Other", "Licensed Clinical Social Worker" = "Other", "Medical Genetics" = "Other", "Medical Oncology" = "Other", "Military Health Care Provider" = "Other", "Multispecialty Clinic/Group Practice" = "Other", "Naturopath" = "Other", "Neuropsychiatry" = "Other", "Nuclear Medicine" = "Other", "Optometry" = "Other", "Pain Management" = "Other", "Pathology" = "Other", "Pediatric Medicine" = "Other", "Podiatry" = "Other", "Preferred Provider Organization" = "Other", "Psychiatry" = "Other", "Psychiatry & Neurology" = "Other", "Psychologist" = "Other", "Psychologist (billing independently)" = "Other", "Pulmonary Disease" = "Other", "Radiation Oncology" = "Other", "Slide Preparation Facility" = "Other", "Specialist" = "Other", "Specialist/Technologist" = "Other", "Student in an Organized Health Care Education/Training Program" = "Other", "Unknown Physician Specialty Code" = "Other", "Unknown Supplier/Provider" = "Other", "Medical Genetics, Ph.D. Medical Genetics" = "Other")
+
+# Plot # of healthcare professionals in each of 10 specialty categories
+
+# Count frequency occurrence of state and turn into Data Frame
+
+prescriber_state_specialty_recode <- prescriber_opioids$recode
+
+table_prescriber_state_specialty_recode <- table(prescriber_state_specialty_recode)
+
+# Check if Data Frame 
+
+is.data.frame(table_prescriber_state_specialty_recode)
+
+# Create as Data Frame
+
+df_prescriber_state_specialty_recode <- data.frame(table_prescriber_state_specialty_recode)
+
+# Plot
+
+plot_df_prescriber_state_specialty_recode <- ggplot(data = df_prescriber_state_specialty_recode, mapping= aes(x = reorder(prescriber_state_specialty_recode, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers", limits=c(0,4000)) + scale_x_discrete(name="Specialty")
+
+plot_df_prescriber_state_specialty_recode
+
+# Linear Regression
+
+opioid_prescriptions_gender_state_specialty_lm <- lm(formula = summary ~ Gender + State + recode, data=prescriber_opioids)
+
+summary(opioid_prescriptions_gender_state_specialty_lm)
+
+# Plot
+
+plot(prescriber_opioids$recode, prescriber_opioids$summary, ylab="Opioid Prescriptions", las=2, main="Specialty vs. Opioid Prescriptions", font=1, cex.axis=0.5)
+
+abline(lm(summary ~ recode, prescriber_opioids))
+
+# Use ggplot to plot categorized healthcare specialty against # of opioid prescriptions
+
+opioid_prescriptions_specialty_categorized <- ggplot(data = prescriber_opioids, aes(recode, summary)) +geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name ="# of opioid prescriptions", limits=c(0, 1000000)) + scale_x_discrete(name = "Specialty Categorized")
+
+opioid_prescriptions_specialty_categorized
+
+
+## (iii) Opioid Prescriptions vs. Opioid-related Overdose Death Rates
 
 # I now have information about opioid prescriptions and the prescribers prescribing those opioids
 
@@ -645,7 +997,13 @@ summary(prescriptions_overdoses_lm)
 # Multiple R-squared:  0.8748,	Adjusted R-squared:  0.8722 
 # F-statistic: 335.5 on 1 and 48 DF,  p-value: < 2.2e-16
 
+# Plot results of linear regression
 
+plot(states_ordered_prescription_overdose$final_prescriber_state_opioid_sum.x, states_ordered_prescription_overdose$overdose_deaths_numeric, xlab="Opioid prescriptions per state", ylab="Opioid-related overdose deaths", main="Opioid Prescriptions vs. Opioid-related Overdose Deaths")
+
+abline(prescriptions_overdoses_lm)
+
+abline(prescriptions_overdoses_lm, col="red")
 
 ```
 
@@ -747,18 +1105,255 @@ summary(opioid_prescriptions_gender_state_lm)
 # Multiple R-squared:  0.01726,	Adjusted R-squared:  0.01294 
 # F-statistic: 3.997 on 56 and 12743 DF,  p-value: < 2.2e-16
 
+# Plot Results
 
-# Multivariate Linear Regression - Gender and State
+plot(prescriber_opioids$Gender, prescriber_opioids$summary, xlab="Sex", ylab="Opioid Prescriptions", main="Sex vs. Opioid Prescriptions")
 
-opioid_prescriptions_gender_state_specialty_lm <- lm(formula = summary ~ Gender + State + Specialty, data=prescriber_opioids)
+abline(opioid_prescriptions_gender_state_lm)
 
-summary(opioid_prescriptions_gender_state_specialty_lm)
+# Looks like 2 outliers in male dataset - could be driving the effect? Identify 2 outliers, remove, and re-run multivariate linear regression
+
+# Identify max value in summary column
+
+which.max(prescriber_opioids$summary)
+
+prescriber_opioids[7354,]
+
+#Prescriber is male, based in Florda, and healthcare professional specialty is Interventional Pain Management - 15234 prescriptions
+
+# Remove from File
+
+remove_one_max_prescriber_opioids <- prescriber_opioids[-c(7354),]
+
+# check it has been removed
+
+nrow(remove_one_max_prescriber_opioids)
+
+
+# Identify max of new dataset
+
+which.max(remove_one_max_prescriber_opioids$summary)
+
+remove_one_max_prescriber_opioids[5118,]
+
+#Prescriber is male, based in Louisiana, and healthcare professional specialty is Physical Medicine and Rehabilitation - 14674 prescriptions
+
+remove_two_max_prescriber_opioids <- remove_one_max_prescriber_opioids[-c(5118),]
+
+# Check that the two max values have been removed
+
+max(remove_two_max_prescriber_opioids$summary)
+
+
+# Re-run linear regression with two max values of men taken out
+
+opioid_prescriptions_gender_state_remove_two_max_male_lm <- lm(formula = summary ~ Gender + State, data=remove_two_max_prescriber_opioids)
+
+summary(opioid_prescriptions_gender_state_remove_two_max_male_lm)
+
+# Plot
+
+plot(remove_two_max_prescriber_opioids$Gender, remove_two_max_prescriber_opioids$summary, xlab="Gender", ylab="Opioid Prescriptions")
+
+abline(lm(summary ~ Gender, remove_two_max_prescriber_opioids))
 
 ```
 
 
 
 ```{r}
+# Multivariate Linear Regression - Gender and State
+# and Specialty
+
+# Collapse Specialties into 10 Categories:
+
+# 01. Family Practice
+
+# Clinic/Center
+# Family Medicine
+# Family Practice
+# General Practice
+
+
+# 02. Internal Medicine
+
+# Addiction Medicine
+# Allergy/Immunology
+# Anesthesiology
+# Cardiology
+# Dermatology
+# Endocrinology
+# Gastroenterology
+# Geriatric Medicine
+# Gynecological/Oncology
+# Hematology
+# Hematology/Oncology
+# Hospitalist
+# Infectious Disease
+# Internal Medicine
+# Interventional Radiology
+# Nephrology
+# Neurology
+# Obstetrics/Gynecology
+# Ophthalmology
+# Otolaryngology
+# Preventive Medicine
+# Rheumatology
+# Sleep Medicine
+# Urology
+
+
+# 03. Nurses
+
+# Certified Clinical Nurse Specialist
+# Certified Nurse Midwife
+# CRNA
+# Licensed Practical Nurse
+# Midwife
+# Nurse Practitioner
+# Registered Nurse
+
+
+# 04. Physician Assistant
+
+# Physician Assistant
+
+
+# 05. Emergency Medicine
+
+# Critical Care (Intensivists)
+# Emergency Medicine
+# General Acute Care Hospital
+# Interventional Pain Management
+# Personal Emergency Response Attendant
+
+
+# 06. Dentist/Maxillofacial & Oral Surgery
+
+# Dentist
+# Maxillofacial Surgery
+# Oral & Maxillofacial Surgery
+# Oral Surgery (dentists only)
+
+
+# 07. Surgery
+
+# Cardiac Surgery
+# Colon & Rectal Surgery
+# Colorectal Surgery (formerly proctology)
+# General Surgery
+# Hand Surgery
+# Neurological Surgery
+# Neurosurgery
+# Orthopaedic Surgery
+# Orthopedic Surgery
+# Plastic and Reconstructive Surgery
+# Plastic Surgery
+# Surgery
+# Surgical Oncology
+# Thoracic Surgery
+# Thoracic Surgery (Cardiothoracic Vascular Surgery)
+# Vascular Surgery
+
+
+# 08. Physical Therapy/Sports Medicine
+
+# Neuromusculoskeletal Medicine, Sports Medicine
+# Osteopathic Manipulative Medicine
+# Physical Medicine and Rehabilitation
+# Physical Therapist
+# Rehabilitation Agency
+# Sports Medicine
+
+
+# 09. Other
+
+# Behavioral Analyst
+# Cardiac Electrophysiology
+# Chiropractic
+# Clinical Pharmacology
+# Community Health Worker
+# Counselor
+# Diagnostic Radiology
+# Geriatric Psychiatry
+# Health Maintenance Organization
+# Homeopath
+# Hospice and Palliative Care
+# Hospital (Dmercs Only)
+# Legal Medicine
+# Licensed Clinical Social Worker
+# Medical Genetics
+# Medical Genetics, Ph.D. Medical Genetics
+# Medical Oncology
+# Military Health Care Provider
+# Multispecialty Clinic/Group Practice
+# Naturopath
+# Neuropsychiatry
+# Nuclear Medicine
+# Optometry
+# Pain Management
+# Pathology
+# Pediatric Medicine
+# Pharmacist
+# Pharmacy Technician
+# Podiatry
+# Preferred Provider Organization
+# Psychiatry
+# Psychiatry & Neurology
+# Psychologist
+# Psychologist (billing independently)
+# Pulmonary Disease
+# Radiation Oncology
+# Slide Preparation Facility
+# Specialist
+# Specialist/Technologist
+# Student in an Organized Health Care Education/Training Program
+# Unknown Physician Specialty Code
+# Unknown Supplier/Provider
+
+# Recode Specialties into 10 categories
+
+prescriber_opioids_specialty_recoding <- prescriber_opioids$recode <- recode(prescriber_opioids$Specialty, "Clinic/Center" = "Family Practice", "Family Medicine" = "Family Practice", "General Practice" = "Family Practice", "Addiction Medicine" = "Internal Medicine", "Allergy/Immunology" = "Internal Medicine", "Anesthesiology" = "Internal Medicine", "Cardiology" = "Internal Medicine", "Dermatology" = "Internal Medicine", "Dermatology" = "Internal Medicine", "Endocrinology" = "Internal Medicine", "Gastroenterology" = "Internal Medicine", "Geriatric Medicine" = "Internal Medicine", "Gynecological/Oncology" = "Internal Medicine", "Hematology" = "Internal Medicine", "Hematology/Oncology" = "Internal Medicine", "Hospitalist" = "Internal Medicine", "Infectious Disease" = "Internal Medicine", "Interventional Radiology" = "Internal Medicine", "Nephrology" = "Internal Medicine", "Neurology" = "Internal Medicine", "Obstetrics/Gynecology" = "Internal Medicine", "Ophthalmology" = "Internal Medicine", "Otolaryngology" = "Internal Medicine", "Preventive Medicine" = "Internal Medicine", "Rheumatology" = "Internal Medicine", "Sleep Medicine" = "Internal Medicine", "Urology" = "Internal Medicine", "Certified Clinical Nurse Specialist" = "Nurse", "Certified Nurse Midwife" = "Nurse", "CRNA" = "Nurse", "Licensed Practical Nurse" = "Nurse", "Midwife" = "Nurse", "Nurse Practitioner" = "Nurse", "Registered Nurse" = "Nurse", "Critical Care (Intensivists)" = "Emergency Medicine", "General Acute Care Hospital" = "Emergency Medicine", "Interventional Pain Management" = "Emergency Medicine", "Personal Emergency Response Attendant" = "Emergency Medicine", "Maxillofacial Surgery" = "Dentist", "Oral & Maxillofacial Surgery" = "Dentist", "Oral Surgery (dentists only)" = "Dentist", "Cardiac Surgery" = "Surgery", "Colon & Rectal Surgery" = "Surgery", "Colorectal Surgery (formerly proctology)" = "Surgery", "General Surgery" = "Surgery", "Hand Surgery" = "Surgery", "Neurological Surgery" = "Surgery", "Neurosurgery" = "Surgery", "Orthopaedic Surgery" = "Surgery", "Orthopedic Surgery" = "Surgery", "Plastic and Reconstructive Surgery" = "Surgery", "Plastic Surgery" = "Surgery", "Surgical Oncology" = "Surgery", "Thoracic Surgery" = "Surgery", "Thoracic Surgery (Cardiothoracic Vascular Surgery)" = "Surgery", "Vascular Surgery" = "Surgery", "Neuromusculoskeletal Medicine, Sports Medicine" = "Physical Therapist", "Osteopathic Manipulative Medicine" = "Physical Therapist", "Physical Medicine and Rehabilitation" = "Physical Therapist", "Rehabilitation Agency" = "Physical Therapist", "Sports Medicine" = "Physical Therapist", "Clinical Pharmacology" = "Other", "Pharmacy Technician" = "Other", "Pharmacist" = "Other", "Behavioral Analyst" = "Other", "Cardiac Electrophysiology" = "Other", "Chiropractic" = "Other", "Community Health Worker" = "Other", "Counselor" = "Other", "Diagnostic Radiology" = "Other", "Geriatric Psychiatry" = "Other", "Health Maintenance Organization" = "Other", "Homeopath" = "Other", "Hospice and Palliative Care" = "Other", "Hospital (Dmercs Only)" = "Other", "Legal Medicine" = "Other", "Licensed Clinical Social Worker" = "Other", "Medical Genetics" = "Other", "Medical Oncology" = "Other", "Military Health Care Provider" = "Other", "Multispecialty Clinic/Group Practice" = "Other", "Naturopath" = "Other", "Neuropsychiatry" = "Other", "Nuclear Medicine" = "Other", "Optometry" = "Other", "Pain Management" = "Other", "Pathology" = "Other", "Pediatric Medicine" = "Other", "Podiatry" = "Other", "Preferred Provider Organization" = "Other", "Psychiatry" = "Other", "Psychiatry & Neurology" = "Other", "Psychologist" = "Other", "Psychologist (billing independently)" = "Other", "Pulmonary Disease" = "Other", "Radiation Oncology" = "Other", "Slide Preparation Facility" = "Other", "Specialist" = "Other", "Specialist/Technologist" = "Other", "Student in an Organized Health Care Education/Training Program" = "Other", "Unknown Physician Specialty Code" = "Other", "Unknown Supplier/Provider" = "Other", "Medical Genetics, Ph.D. Medical Genetics" = "Other")
+
+# Plot # of healthcare professionals in each of 10 specialty categories
+
+# Count frequency occurrence of state and turn into Data Frame
+
+prescriber_state_specialty_recode <- prescriber_opioids$recode
+
+table_prescriber_state_specialty_recode <- table(prescriber_state_specialty_recode)
+
+# Check if Data Frame 
+
+is.data.frame(table_prescriber_state_specialty_recode)
+
+# Create as Data Frame
+
+df_prescriber_state_specialty_recode <- data.frame(table_prescriber_state_specialty_recode)
+
+# Plot
+
+plot_df_prescriber_state_specialty_recode <- ggplot(data = df_prescriber_state_specialty_recode, mapping= aes(x = reorder(prescriber_state_specialty_recode, -Freq), Freq)) + geom_bar(stat = "identity")+ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name = "# of opioid prescribers", limits=c(0,4000)) + scale_x_discrete(name="Specialty")
+
+plot_df_prescriber_state_specialty_recode
+
+# Linear Regression
+
+opioid_prescriptions_gender_state_specialty_lm <- lm(formula = summary ~ Gender + State + recode, data=prescriber_opioids)
+
+summary(opioid_prescriptions_gender_state_specialty_lm)
+
+# Plot
+
+plot(prescriber_opioids$recode, prescriber_opioids$summary, ylab="Opioid Prescriptions", las=2, main="Specialty vs. Opioid Prescriptions", font=1, cex.axis=0.5)
+
+abline(lm(summary ~ recode, prescriber_opioids))
+
+# Use ggplot to plot categorized healthcare specialty against # of opioid prescriptions
+
+opioid_prescriptions_specialty_categorized <- ggplot(data = prescriber_opioids, aes(recode, summary)) +geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + scale_y_continuous(name ="# of opioid prescriptions", limits=c(0, 1000000)) + scale_x_discrete(name = "Specialty Categorized")
+
+opioid_prescriptions_specialty_categorized
 
 ```
 
